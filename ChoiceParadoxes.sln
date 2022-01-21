@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31829.152
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "ChoiceParadoxes", "ChoiceParadoxes\ChoiceParadoxes.njsproj", "{AABFA50B-DEFE-489B-9C25-9DF109818EEB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AABFA50B-DEFE-489B-9C25-9DF109818EEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AABFA50B-DEFE-489B-9C25-9DF109818EEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AABFA50B-DEFE-489B-9C25-9DF109818EEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AABFA50B-DEFE-489B-9C25-9DF109818EEB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {40781681-F994-4EFD-B9F6-CB0341B3EDEA}
+	EndGlobalSection
+EndGlobal

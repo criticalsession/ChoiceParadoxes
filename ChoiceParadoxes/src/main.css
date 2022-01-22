@@ -62,6 +62,7 @@ button.this-sim-running {
     padding-top: 10px;
     font-size: 0.8rem;
     color: #666;
+    text-align: right;
 }
 
 .footer a {

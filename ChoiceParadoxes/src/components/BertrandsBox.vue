@@ -140,7 +140,7 @@
                 same: 0,
                 different: 0,
                 simRunning: false,
-                playedGame: true,
+                playedGame: false,
                 wait: 500,
                 maxRuns: 5000,
                 ranSimOnce: false,

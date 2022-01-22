@@ -2,7 +2,7 @@
     <div id="app">
         <router-link to="/" v-if="!isHome" class="return-home">Return home</router-link>
         <router-view></router-view>
-        <p class="footer">&copy;2022 <a href="https://github.com/criticalsession" target="_blank">Amante Reale</a></p>
+        <p class="footer">Developed by <strong>Amante Reale</strong> &prop; <a href="https://github.com/criticalsession/ChoiceParadoxes/tree/master/ChoiceParadoxes" target="_blank">View/Download Code</a></p>
     </div>
 </template>
 

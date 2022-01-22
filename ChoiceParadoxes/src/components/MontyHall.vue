@@ -146,7 +146,7 @@
         },
         data() {
             return {
-                playedGame: true,
+                playedGame: false,
                 simulationRuns: 0,
                 wins: 0,
                 losses: 0,

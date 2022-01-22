@@ -1,6 +1,6 @@
 <template>
-    <div style="width: 400px; height: 400px">
-        <canvas id="myChart"></canvas>
+    <div style="width: 400px; height: 200px">
+        <canvas :id="chartId"></canvas>
     </div>
 </template>
 
@@ -11,10 +11,6 @@
         name: "BarChart",
         data() {
             return {
-                labels: [
-                    'Wins',
-                    'Losses',
-                ],
                 chart: null,
             }
         },
@@ -26,13 +22,13 @@
                 }
             }
         },
-        props: ['values'],
+        props: ['values', 'labels', 'title', 'chartId'],
         methods: {
             drawChart() {
                 const data = {
                     labels: this.labels,
                     datasets: [{
-                        label: 'Simulation Results (%)',
+                        label: this.title,
                         backgroundColor: ['black'],
                         data: this.values,
                     }]
@@ -54,13 +50,12 @@
                 };
 
                 this.chart = new Chart(
-                    document.getElementById('myChart'),
+                    document.getElementById(this.chartId),
                     config
                 );
             },
         },
         mounted() {
-            console.log('mounted', this.values);
             this.drawChart();
         },
     };

@@ -2,17 +2,25 @@
     <div class="home">
         <h1>Monty Hall Problem</h1>
         <problem-navigation v-on:show-explanation="showExplanation" wikiLink="https://en.wikipedia.org/wiki/Monty_Hall_problem"></problem-navigation>
-        <h2>Play the Game</h2>
-        <p>In this game you are given a choice of three doors. Behind one door is a car, behind the other two is nothing. After you choose a door, the host of the game will open one of the other doors, not containing the car. At this point you are given a choice to either keep the same door, or choose the other one. Once you make that choice, the host will open your door revealing whether you've won the car or lost.</p>
+        <h2>Instructions</h2>
+        <Instructions>
+            <p>In this game you are given a choice of three doors. Behind one door is a car, behind the other two is nothing. After you choose a door, the host of the game will open one of the other doors, not containing the car. At this point you are given a choice to either keep the same door, or choose the other one. Once you make that choice, the host will open your door revealing whether you've won the car or lost.</p>
+            <p><strong>Do you switch your initial choice to the remaining door? Or do you keep the same one? Does it matter?</strong></p>
+        </Instructions>
+        <p class="buttons">
+            <button :disabled="simRunning" type="button" :class="{ 'active': !simRunning }" v-on:click="startPlay">Play!</button>
+            <button v-if="playedGame" :disabled="simRunning" :class="{ 'active' : !simRunning, 'this-sim-running' : simRunning && !this.withSwitch }" v-on:click="simulate(false)" type="button">Simulate - Don't Switch Doors</button>
+            <button v-if="playedGame" :disabled="simRunning" :class="{ 'active' : !simRunning, 'this-sim-running' : simRunning && this.withSwitch }" v-on:click="simulate(true)" type="button">Simulate - Switch Doors</button>
+            <button class="active" v-if="simRunning && playedGame" v-on:click="stopSim">Stop Simulation</button>
+        </p>
         <div class="game">
 
         </div>
-        <div v-if="playedGame" class="simulation">
-            <button :disabled="simRunning" v-on:click="simulate(false)" type="button">Simulate - No Switching</button> <button :disabled="simRunning" v-on:click="simulate(true)" type="button">Simulate Switching</button> <button v-if="simRunning" v-on:click="stopSim">Stop Simulation</button>
-        </div>
         <div class="simulation-display" v-if="ranSimOnce">
             <p class="simulation-notes"><strong>Simulations ({{withSwitch ? "Switch Doors" : "Don't Switch Doors"}}):</strong> {{simulationRuns}} - <strong>Wins:</strong> {{wins}}, <strong>Losses:</strong> {{losses}}</p>
-            <BarChart :values="getBarChartValues()"></BarChart>
+            <div class="bar-charts">
+                <BarChart :values="getBarChartValues()" :chartId="'montyhall'" :labels="getBarChartLabels()" :title="'Simulation Results (%)'"></BarChart>
+            </div>
         </div>
         <div style="clear: both"></div>
     </div>
@@ -21,6 +29,7 @@
 <script>
     import ProblemNavigation from './ProblemNavigation.vue';
     import BarChart from './BarChart.vue';
+    import Instructions from './Instructions.vue';
 
     export default {
         name: 'MontyHall',
@@ -28,6 +37,12 @@
 
         },
         methods: {
+            startPlay() {
+                alert('play!');
+            },
+            getBarChartLabels() {
+                return ["wins", "losses"];
+            },
             getBarChartValues() {
                 return [this.wins * 100.0 / this.simulationRuns, this.losses * 100.0 / this.simulationRuns];
             },
@@ -127,6 +142,7 @@
         components: {
             ProblemNavigation,
             BarChart,
+            Instructions,
         },
         data() {
             return {
@@ -162,9 +178,6 @@
         margin-left: 20px;
         padding-top: 10px;
         border: solid 4px black;
-    }
-    .legend span {
-        display: inline-block;
     }
     .blue {
         background-color: darkblue;

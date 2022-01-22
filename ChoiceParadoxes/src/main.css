@@ -1,3 +1,73 @@
-a {
+* {
+    font-family: 'Roboto', sans-serif;
+}
+
+#app {
+    width: 960px;
+    margin: 0 auto;
+}
+
+.buttons button {
+    background-color: #ccc;
+    margin-right: 10px;
+    cursor: default;
+}
+
+a, button.active {
+    background-color: black;
+    cursor: pointer;
+}
+
+a, button {
     font-weight: bold;
+    display: inline-block;
+    color: white;
+    padding: 4px 8px;
+    text-decoration: none;
+    transition: background-color 0.5s, padding 0.5s;
+    border: 0;
+    font-size: 14px;
+}
+
+a:hover, button.active:hover {
+    background-color: darkslateblue;
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
+button.this-sim-running {
+    background-color: darkgreen;
+}
+
+.instructions {
+    padding: 10px;
+    margin: 0 20px;
+    background-color: #f5f5f5;
+    border: solid 1px #ddd;
+    border-bottom-width: 3px ;
+}
+
+.simulation-display {
+    text-align: center;
+}
+
+.bar-charts {
+    display: inline-block;
+    margin: 0 auto;
+}
+
+.footer {
+    border-top: solid 1px #ccc;
+    margin-top: 10px;
+    padding-top: 10px;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.footer a {
+    font-size: 0.8rem;
+}
+
+.problem-navigation {
+    margin-bottom: 20px;
 }

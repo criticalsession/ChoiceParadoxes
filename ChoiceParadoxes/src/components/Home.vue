@@ -1,7 +1,7 @@
 <template>
     <div class="home">
         <h1>Choice Paradoxes</h1>
-        <Instructions>
+        <Instructions :hidePlayInstructions="true">
             <p>&bull; For each paradox you will be given a choice to <strong>play</strong> the game yourself. Try it out a couple of times.</p>
             <p>&bull; When you're done, try running a <strong>simulation</strong>.
             <p>&bull; Click the <strong>Explain</strong> button to read why the problem tricks people, and how to solve it mathematically.</p>

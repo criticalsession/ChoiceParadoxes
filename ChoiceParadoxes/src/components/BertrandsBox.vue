@@ -204,7 +204,7 @@
             gameMessage() {
                 let message = '';
                 if (this.game.step === 1) {
-                    message = 'Each of the 3 boxes below contains 2 coins. <strong>Click on a box to take one of its coins.</strong>';
+                    message = 'Each of the 3 boxes below contains 2 coins. <strong>Click on a box to reveal one of its coins.</strong>';
                     message += '<br /><br />If it\'s a <strong>GOLD coin</strong> you will try to guess whether the second coin is also a GOLD coin. You will win if you guess correctly.';
                     message += '<br /><br />If your first coin is a <strong> SILVER coin</strong> you lose immediately.';
                 } else if (this.game.step === 2 || this.game.step === 5) {
@@ -218,11 +218,11 @@
                         message += '<br /><br /><strong>You lost!</strong> But don\'t worry, just click the "Play!" button to reshuffle the boxes and try again.';
                     }
                 } else if (this.game.step === 3) {
-                    message = '<strong>You win!</strong> You predicted the second coin would be a ' + (this.game.prediction === 1 ? 'SILVER' : 'GOLD') + ' coin and it was.<br /><br />';
+                    message = '<strong>You win!</strong> You predicted the second coin would be a <strong>' + (this.game.prediction === 1 ? 'SILVER' : 'GOLD') + ' coin</strong> and it was.<br /><br />';
                     message += 'Now you can either click the "Play!" to try your luck again, or click "Simulate" to run thousands of games automatically.<br /><br />The results might surprise you!';
                 } else if (this.game.step === 4) {
-                    message = '<strong>You lost!</strong> You predicted the second coin would be a ' + (this.game.prediction === 1 ? 'SILVER' : 'GOLD') + ' coin but, unfortunately, it wasn\'t.<br /><br />'
-                    message += 'But don\'t worry, just click the "Play!" button to reshuffle the boxes and try again.';
+                    message = '<strong>You lost!</strong> You predicted the second coin would be a <strong>' + (this.game.prediction === 1 ? 'SILVER' : 'GOLD') + ' coin</strong> but, unfortunately, it wasn\'t.<br /><br />'
+                    message += 'But don\'t worry, just click the <strong>"Play!"</strong> button to reshuffle the boxes and try again.';
                 }
 
                 return message;

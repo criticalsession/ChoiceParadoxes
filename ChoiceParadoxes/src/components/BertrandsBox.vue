@@ -15,13 +15,16 @@
             <div class="message" v-html="gameMessage"></div>
             <div class="content">
                 <div class="step1" v-if="game.step === 1">
-                    <div class="box active" @click="selectedBox(1)">Box 1</div>
-                    <div class="box active" @click="selectedBox(2)">Box 2</div>
-                    <div class="box active" @click="selectedBox(3)">Box 3</div>
+                    <img class="box clickable" @click="selectedBox(1)" src="~@/assets/bertrands_box/closed_box1.jpg" />
+                    <img class="box clickable" @click="selectedBox(2)" src="~@/assets/bertrands_box/closed_box2.jpg" />
+                    <img class="box clickable" @click="selectedBox(3)" src="~@/assets/bertrands_box/closed_box3.jpg" />
                 </div>
-                <div class="step2" v-if="game.step === 2 || game.step === 3 || game.step === 4">
-                    <div class="box">Box {{ this.game.selectedBox }}<br />
-                    (G) - <span v-if="this.game.secondCoin === null">(?)</span><span v-else>({{ this.game.secondCoin === 1 ? 'S' : 'G' }})</span>
+                <div class="step2" v-if="game.step > 1">
+                    <div class="box-display">
+                        <img src="~@/assets/bertrands_box/open_silver.jpg" v-if="game.step === 5" />
+                        <img src="~@/assets/bertrands_box/open_gold.jpg" v-if="game.step === 2" />
+                        <img src="~@/assets/bertrands_box/open_goldgold.jpg" v-if="(game.step === 3 || game.step === 4) && game.secondCoin === 2" />
+                        <img src="~@/assets/bertrands_box/open_goldsilver.jpg" v-if="(game.step === 3 || game.step === 4) && game.secondCoin === 1" />
                     </div>
                     <div class="coin-prediction" v-if="game.step === 2">
                         The next coin will be <button v-on:click="takeSecondCoin(2)" type="button" class="active">GOLD</button> <button v-on:click="takeSecondCoin(1)" type="button" class="active">SILVER</button>
@@ -180,7 +183,7 @@
 
                 this.game.firstCoin = coin === 1 ? 'SILVER' : 'GOLD';
                 if (coin === 1) {
-                    this.game.step = 9;
+                    this.game.step = 5;
                 } else {
                     this.game.step = 2;
                 }
@@ -204,14 +207,14 @@
                     message = 'Each of the 3 boxes below contains 2 coins. <strong>Click on a box to take one of its coins.</strong>';
                     message += '<br /><br />If it\'s a <strong>GOLD coin</strong> you will try to guess whether the second coin is also a GOLD coin. You will win if you guess correctly.';
                     message += '<br /><br />If your first coin is a <strong> SILVER coin</strong> you lose immediately.';
-                } else if (this.game.step === 2 || this.game.step === 9) {
-                    message = 'You open box <strong>#' + this.game.selectedBox + '</strong> and take a <strong>' + this.game.firstCoin + ' coin</strong>.';
+                } else if (this.game.step === 2 || this.game.step === 5) {
+                    message = 'You open box <strong>#' + this.game.selectedBox + '</strong> and find a <strong>' + this.game.firstCoin + ' coin</strong>.';
 
                     if (this.game.step === 2) {
                         message += '<br /><br />Think carefully about the odds. Do you think the second coin is going to be a GOLD coin, or a SILVER coin?';
                         message += '<br /><br /><i style="font-size: 0.8rem;">(Reminder: Boxes are assigned a random pair of 2 coins: 2 GOLD, 2 SILVER and 1 GOLD/1 SILVER.)</i>';
                     }
-                    else if (this.game.step === 9) {
+                    else if (this.game.step === 5) {
                         message += '<br /><br /><strong>You lost!</strong> But don\'t worry, just click the "Play!" button to reshuffle the boxes and try again.';
                     }
                 } else if (this.game.step === 3) {
@@ -254,13 +257,13 @@
 <style scoped>
     .box {
         float: left;
-        cursor: default;
-        background-color: #EEE;
-        border: solid 1px #CCC;
-        padding: 20px;
-        margin-right: 10px;
-        transition: background-color 0.5s, color 0.5s;
-        text-align: center;
+        margin-right: 20px;
+        width: 150px;
+        margin-top: 10px;
+    }
+
+    .box.clickable {
+        cursor: pointer;
     }
 
     .step2 .box {
@@ -269,22 +272,13 @@
         margin: 10px auto;
     }
 
-    .box.active {
-        cursor: pointer;
-    }
-
     .step1 {
         margin: 0 auto;
-        width: 274px;
+        width: 510px;
     }
 
     .step2 {
         text-align: center;
-    }
-
-    .box.active:hover {
-        background-color: darkslateblue;
-        color: white;
     }
 
     .coin-prediction {

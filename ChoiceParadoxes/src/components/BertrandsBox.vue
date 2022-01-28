@@ -8,37 +8,21 @@
         </Instructions>
         <p class="buttons">
             <button v-on:click="startPlay" :disabled="simRunning" type="button" :class="{ 'active' : !simRunning}">Play!</button>
-            <button :disabled="simRunning" :class="{ 'active' : !simRunning, 'this-sim-running' : simRunning } " v-if="playedGame" v-on:click="simulate()" type="button">Simulate</button>
-            <button class="active" v-if="simRunning && playedGame" v-on:click="stopSim">Stop Simulation</button>
+            <button :disabled="simRunning" :class="{ 'active' : !simRunning, 'this-sim-running' : simRunning } " v-if="wonGame" v-on:click="simulate()" type="button">Simulate</button>
+            <button class="active" v-if="simRunning && wonGame" v-on:click="stopSim">Stop Simulation</button>
         </p>
-        <div class="game" v-if="game.step > 0">
-            <div class="message" v-html="gameMessage"></div>
-            <div class="content">
-                <div class="step1" v-if="game.step === 1">
-                    <img class="box clickable" @click="selectedBox(1)" src="~@/assets/bertrands_box/closed_box1.jpg" />
-                    <img class="box clickable" @click="selectedBox(2)" src="~@/assets/bertrands_box/closed_box2.jpg" />
-                    <img class="box clickable" @click="selectedBox(3)" src="~@/assets/bertrands_box/closed_box3.jpg" />
-                </div>
-                <div class="step2" v-if="game.step > 1">
-                    <div class="box-display">
-                        <img src="~@/assets/bertrands_box/open_silver.jpg" v-if="game.step === 5" />
-                        <img src="~@/assets/bertrands_box/open_gold.jpg" v-if="game.step === 2" />
-                        <img src="~@/assets/bertrands_box/open_goldgold.jpg" v-if="(game.step === 3 || game.step === 4) && game.secondCoin === 2" />
-                        <img src="~@/assets/bertrands_box/open_goldsilver.jpg" v-if="(game.step === 3 || game.step === 4) && game.secondCoin === 1" />
-                    </div>
-                    <div class="coin-prediction" v-if="game.step === 2">
-                        The next coin will be <button v-on:click="takeSecondCoin(2)" type="button" class="active">GOLD</button> <button v-on:click="takeSecondCoin(1)" type="button" class="active">SILVER</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="simulation-display" v-if="ranSimOnce">
+        <BBoxGame v-if="playing" v-on:won-game="playerWonGame" :funcFillBoxes="fillBoxes" />
+        <div class="simulation-display" v-if="showSimResults">
             <p class="simulation-notes"><strong>Simulations:</strong> {{simulationRuns}} - First Coin: {{firstGold}} gold, {{firstSilver}} silver; of those gold, the second coin was: {{same}} gold, {{different}} silver</p>
             <div class="bar-charts">
                 <BarChart style="float:left" :values="getBarChartValues('goldvsilver')" :chartId="'goldvsilver'" :labels="getBarChartLabels('goldvsilver')" :title="'First Coin Type (%)'"></BarChart>
                 <BarChart style="float:left; margin-left: 10px;" :values="getBarChartValues('twogold')" :chartId="'twogold'" :labels="getBarChartLabels('twogold')" :title="'Second Coin After First Gold (%)'"></BarChart>
                 <div style="clear: both">&nbsp;</div>
-                <p style="clear: both; margin-top: 10px; text-align: center; font-weight: bold;" v-if="simulationRuns > 200">Did you predict that, after a GOLD coin, a second GOLD coin is twice as likely as a SILVER one?<br />Or did you think it's 50/50?<br /><br />Click the "Explanation" button up top to find out why.</p>
+                <div class="post-sim-information" v-if="simulationRuns > 200">
+                    <p>Finding that first GOLD coin is obviously a 50/50 chance.</p>
+                    <p>But did you guess that a second GOLD coin is twice as likely as a SILVER one?<br />Or did you think it's also 50/50?</p>
+                    <p>Click the "Explanation" button up top to find out why.</p>
+                </div>
             </div>
         </div>
         <div style="clear: both"></div>
@@ -49,6 +33,8 @@
     import ProblemNavigation from './ProblemNavigation.vue';
     import BarChart from './BarChart.vue';
     import Instructions from './Instructions.vue';
+    import BBoxGame from './BBoxGame.vue';
+    import * as f from '../funcs.js';
 
     export default {
         name: 'BertrandsBox',
@@ -56,10 +42,16 @@
             ProblemNavigation,
             BarChart,
             Instructions,
+            BBoxGame,
         },
         methods: {
             showExplanation() {
 
+            },
+            startPlay() {
+                this.showSimResults = false;
+                this.playing = false;
+                setTimeout(() => { this.playing = true; }, 1);
             },
             getBarChartLabels(whichOne) {
                 if (whichOne === 'goldvsilver') {
@@ -77,10 +69,10 @@
             },
             simulate() {
                 if (!this.simRunning) {
-                    this.resetGame();
+                    this.playing = false;
 
                     this.simRunning = true;
-                    this.ranSimOnce = true;
+                    this.showSimResults = true;
 
                     this.wait = 500;
                     this.simulationRuns = 0;
@@ -96,13 +88,28 @@
             stopSim() {
                 this.simRunning = false;
             },
+            fillBoxes() {
+                let options = [[1, 1], [1, 2], [2, 2]];
+                let boxes = [];
+
+                for (let i = 0; i < 3; i++) {
+                    // pick set at random
+                    let index = f.rand(options.length);
+                    let option = options[index];
+                    options.splice(index, 1);
+
+                    boxes.push(option);
+                }
+
+                return boxes;
+            },
             simulateTick() {
                 this.simulationRuns++;
 
                 const boxes = this.fillBoxes();
                 const chosenBox = this.chooseBox(boxes);
                 if (chosenBox !== [1, 1]) {
-                    const chosenCoinIndex = this.rand(2);
+                    const chosenCoinIndex = f.rand(2);
                     const coin = chosenBox[chosenCoinIndex];
                     if (coin === 2) {
                         this.firstGold++;
@@ -132,100 +139,10 @@
                 }
             },
             chooseBox(boxes) {
-                return boxes[this.rand(3)];
+                return boxes[f.rand(3)];
             },
-            fillBoxes() {
-                let options = [[1, 1], [1, 2], [2, 2]];
-                let boxes = [];
-
-                for (let i = 0; i < 3; i++) {
-                    // pick set at random
-                    let index = this.rand(options.length);
-                    let option = options[index];
-                    options.splice(index, 1);
-
-                    boxes.push(option);
-                }
-
-                return boxes;
-            },
-            rand(max) {
-                return Math.floor(Math.random() * max);
-            },
-            resetGame() {
-                this.game = {
-                    boxes: [],
-                    step: 0,
-                    boxSelected: 0,
-                    firstCoin: null,
-                    secondCoin: null,
-                    prediction: null,
-                };
-            },
-            startPlay() {
-                this.resetGame();
-
-                this.simRunning = false;
-                this.ranSimOnce = false;
-
-                this.game.boxes = this.fillBoxes();
-                this.game.step = 1;
-            },
-            selectedBox(box) {
-                this.game.selectedBox = box;
-
-                let actualBox = this.game.boxes[box - 1];
-
-                const coinIndex = this.rand(2);
-                const coin = actualBox[coinIndex];
-
-                actualBox.splice(coinIndex, 1); //remove the coin
-
-                this.game.firstCoin = coin === 1 ? 'SILVER' : 'GOLD';
-                if (coin === 1) {
-                    this.game.step = 5;
-                } else {
-                    this.game.step = 2;
-                }
-            },
-            takeSecondCoin(prediction) {
-                this.game.secondCoin = this.game.boxes[this.game.selectedBox - 1][0];
-                this.game.prediction = prediction;
-
-                if (prediction === this.game.secondCoin) {
-                    this.game.step = 3;
-                    this.playedGame = true;
-                } else {
-                    this.game.step = 4;
-                }
-            },
-        },
-        computed: {
-            gameMessage() {
-                let message = '';
-                if (this.game.step === 1) {
-                    message = 'Each of the 3 boxes below contains 2 coins. <strong>Click on a box to reveal one of its coins.</strong>';
-                    message += '<br /><br />If it\'s a <strong>GOLD coin</strong> you will try to guess whether the second coin is also a GOLD coin. You will win if you guess correctly.';
-                    message += '<br /><br />If your first coin is a <strong> SILVER coin</strong> you lose immediately.';
-                } else if (this.game.step === 2 || this.game.step === 5) {
-                    message = 'You open box <strong>#' + this.game.selectedBox + '</strong> and find a <strong>' + this.game.firstCoin + ' coin</strong>.';
-
-                    if (this.game.step === 2) {
-                        message += '<br /><br />Think carefully about the odds. Do you think the second coin is going to be a GOLD coin, or a SILVER coin?';
-                        message += '<br /><br /><i style="font-size: 0.8rem;">(Reminder: Boxes are assigned a random pair of 2 coins: 2 GOLD, 2 SILVER and 1 GOLD/1 SILVER.)</i>';
-                    }
-                    else if (this.game.step === 5) {
-                        message += '<br /><br /><strong>You lost!</strong> But don\'t worry, just click the "Play!" button to reshuffle the boxes and try again.';
-                    }
-                } else if (this.game.step === 3) {
-                    message = '<strong>You win!</strong> You predicted the second coin would be a <strong>' + (this.game.prediction === 1 ? 'SILVER' : 'GOLD') + ' coin</strong> and it was.<br /><br />';
-                    message += 'Now you can either click the "Play!" to try your luck again, or click "Simulate" to run thousands of games automatically.<br /><br />The results might surprise you!';
-                } else if (this.game.step === 4) {
-                    message = '<strong>You lost!</strong> You predicted the second coin would be a <strong>' + (this.game.prediction === 1 ? 'SILVER' : 'GOLD') + ' coin</strong> but, unfortunately, it wasn\'t.<br /><br />'
-                    message += 'But don\'t worry, just click the <strong>"Play!"</strong> button to reshuffle the boxes and try again.';
-                }
-
-                return message;
+            playerWonGame() {
+                this.wonGame = true;
             },
         },
         data() {
@@ -234,20 +151,13 @@
                 same: 0,
                 different: 0,
                 simRunning: false,
-                playedGame: false,
+                wonGame: false,
                 wait: 500,
                 maxRuns: 3000,
-                ranSimOnce: false,
+                showSimResults: false,
                 firstGold: 0,
                 firstSilver: 0,
-                game: {
-                    boxes: [],
-                    step: 0,
-                    boxSelected: 0,
-                    firstCoin: 'GOLD',
-                    secondCoin: null,
-                    prediction: null,
-                }
+                playing: false,
             };
         },
     };
@@ -255,33 +165,4 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-    .box {
-        float: left;
-        margin-right: 20px;
-        width: 150px;
-        margin-top: 10px;
-    }
-
-    .box.clickable {
-        cursor: pointer;
-    }
-
-    .step2 .box {
-        float: none;
-        width: 80px;
-        margin: 10px auto;
-    }
-
-    .step1 {
-        margin: 0 auto;
-        width: 510px;
-    }
-
-    .step2 {
-        text-align: center;
-    }
-
-    .coin-prediction {
-        clear: both;
-    }
 </style>

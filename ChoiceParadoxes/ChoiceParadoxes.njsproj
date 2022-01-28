@@ -35,6 +35,9 @@
     <Content Include="src\components\BarChart.vue">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="src\components\BBoxGame.vue">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="src\components\BertrandsBox.vue">
       <SubType>Code</SubType>
     </Content>
@@ -48,6 +51,9 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="src\components\ProblemNavigation.vue">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="src\funcs.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="src\main.css">

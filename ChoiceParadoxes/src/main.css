@@ -80,3 +80,9 @@ button.this-sim-running {
 .game .content {
     margin-top: 10px;
 }
+
+.post-sim-information {
+    font-weight: bold;
+    text-align: center;
+    margin-top: 10px;
+}

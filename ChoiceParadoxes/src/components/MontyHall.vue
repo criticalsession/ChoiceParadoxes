@@ -16,10 +16,11 @@
         <div class="game">
 
         </div>
-        <div class="simulation-display" v-if="ranSimOnce">
+        <div class="simulation-display" v-if="showSimResults">
             <p class="simulation-notes"><strong>Simulations ({{withSwitch ? "Switch Doors" : "Don't Switch Doors"}}):</strong> {{simulationRuns}} - <strong>Wins:</strong> {{wins}}, <strong>Losses:</strong> {{losses}}</p>
             <div class="bar-charts">
-                <BarChart :values="getBarChartValues()" :chartId="'montyhall'" :labels="getBarChartLabels()" :title="'Simulation Results (%)'"></BarChart>
+                <BarChart style="float:left;" :values="getBarChartValues('doors')" :chartId="'doors'" :labels="getBarChartLabels('doors')" :title="'Car Behind Which Door? (%)'"></BarChart>
+                <BarChart style="float: left; margin-left: 10px;" :values="getBarChartValues('wins')" :chartId="'wins'" :labels="getBarChartLabels('wins')" :title="'Wins vs Losses (%)'"></BarChart>
             </div>
         </div>
         <div style="clear: both"></div>
@@ -40,39 +41,42 @@
             startPlay() {
                 alert('play!');
             },
-            getBarChartLabels() {
-                return ["wins", "losses"];
+            getBarChartLabels(which) {
+                if (which === 'wins') {
+                    return ['wins', 'losses'];
+                } else {
+                    return ['Door 1', 'Door 2', 'Door 3'];
+                }
             },
-            getBarChartValues() {
-                return [this.wins * 100.0 / this.simulationRuns, this.losses * 100.0 / this.simulationRuns];
-            },
-            doorClass(no) {
-                let cl = { };
+            getBarChartValues(which) {
+                if (which === 'wins') {
+                    return [this.wins * 100.0 / this.simulationRuns, this.losses * 100.0 / this.simulationRuns];
+                } else {
+                    let dat = [];
+                    dat.push(this.carBehindDoor[0] * 100.0 / this.simulationRuns);
+                    dat.push(this.carBehindDoor[1] * 100.0 / this.simulationRuns);
+                    dat.push(this.carBehindDoor[2] * 100.0 / this.simulationRuns);
 
-                if (this.display.carDoor === no) cl.blue = true;
-                if (this.display.firstChoice === no) cl.red = true;
-                if (this.display.finalChoice === no && this.display.win) cl.green = true;
-                if (this.display.finalChoice === no && !this.display.win) cl.orange = true;
-                if (this.display.hostOpens === no) cl.pink = true;
-
-                return cl;
+                    return dat;
+                }
             },
             showExplanation() {
-                alert('explain');
+
             },
             simulate(withSwitch) {
                 if (!this.simRunning) {
                     this.simRunning = true;
-                    this.ranSimOnce = true;
+                    this.showSimResults = true;
 
                     this.wait = 500;
                     this.simulationRuns = 0;
                     this.wins = 0;
                     this.losses = 0;
                     this.withSwitch = withSwitch;
-                    this.maxRuns = 5000;
+                    this.maxRuns = 3000;
 
                     this.simulateTick();
+                    this.carBehindDoor = [0, 0, 0];
                 }
             },
             stopSim() {
@@ -81,32 +85,28 @@
             simulateTick() {
                 this.simulationRuns++;
 
-                this.display.carDoor = this.rand(3);
-                this.display.firstChoice = this.rand(3);
+                const carDoor = this.rand(3);
+                const firstChoice = this.rand(3);
 
-                this.display.hostOpens = this.hostOpensDoor(this.display.carDoor, this.display.firstChoice);
+                this.carBehindDoor[carDoor - 1]++;
+
+                const hostOpens = this.hostOpensDoor(carDoor, firstChoice);
 
                 if (this.withSwitch) {
                     // switch door
-                    this.display.finalChoice = [1, 2, 3].find(n => n !== this.display.firstChoice && n !== this.display.hostOpens);
-                    if (this.display.finalChoice === this.display.carDoor) {
+                    const finalChoice = [1, 2, 3].find(n => n !== firstChoice && n !== hostOpens);
+                    if (finalChoice === carDoor) {
                         this.wins++;
-                        this.display.win = true;
                     }
                     else {
                         this.losses++;
-                        this.display.win = false;
                     }
                 } else {
-                    this.display.finalChoice = this.display.firstChoice;
-
-                    if (this.display.firstChoice === this.display.carDoor) {
+                    if (firstChoice === carDoor) {
                         this.wins++;
-                        this.display.win = true;
                     }
                     else {
                         this.losses++;
-                        this.display.win = false;
                     }
                 }
 
@@ -146,22 +146,16 @@
         },
         data() {
             return {
-                playedGame: false,
+                playedGame: true,
                 simulationRuns: 0,
                 wins: 0,
                 losses: 0,
                 simRunning: false,
                 wait: 500,
                 withSwitch: false,
-                display: {
-                    firstChoice: 0,
-                    carDoor: 0,
-                    hostOpens: 0,
-                    finalChoice: 0,
-                    win: false,
-                },
-                maxRuns: 5000,
-                ranSimOnce: false,
+                maxRuns: 300,
+                showSimResults: false,
+                carBehindDoor: [0,0,0],
             }
         },
     };

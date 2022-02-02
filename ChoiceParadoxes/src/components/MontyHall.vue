@@ -8,19 +8,24 @@
             <p><strong>Do you switch your initial choice to the remaining door? Or do you keep the same one? Does it matter?</strong></p>
         </Instructions>
         <p class="buttons">
-            <button :disabled="simRunning" type="button" :class="{ 'active': !simRunning }" v-on:click="startPlay">Play!</button>
-            <button v-if="playedGame" :disabled="simRunning" :class="{ 'active' : !simRunning, 'this-sim-running' : simRunning && !this.withSwitch }" v-on:click="simulate(false)" type="button">Simulate - Don't Switch Doors</button>
-            <button v-if="playedGame" :disabled="simRunning" :class="{ 'active' : !simRunning, 'this-sim-running' : simRunning && this.withSwitch }" v-on:click="simulate(true)" type="button">Simulate - Switch Doors</button>
-            <button class="active" v-if="simRunning && playedGame" v-on:click="stopSim">Stop Simulation</button>
+            <button :disabled="sim.manager.running" type="button" :class="{ 'active': !sim.manager.running }" v-on:click="startPlay">Play!</button>
+            <button v-if="wonGame" :disabled="sim.manager.running" :class="{ 'active' : !sim.manager.running, 'this-sim-running' : sim.manager.running && !sim.withSwitch }" v-on:click="simulate(false)" type="button">Simulate - Don't Switch Doors</button>
+            <button v-if="wonGame" :disabled="sim.manager.running" :class="{ 'active' : !sim.manager.running, 'this-sim-running' : sim.manager.running && sim.withSwitch }" v-on:click="simulate(true)" type="button">Simulate - Switch Doors</button>
+            <button class="active" v-if="sim.manager.running && wonGame" v-on:click="stopSim">Stop Simulation</button>
         </p>
-        <div class="game">
-
-        </div>
+        <MontyGame v-if="playing" v-on:won-game="playerWonGame" :hostOpensDoor="hostOpensDoor" />
         <div class="simulation-display" v-if="showSimResults">
-            <p class="simulation-notes"><strong>Simulations ({{withSwitch ? "Switch Doors" : "Don't Switch Doors"}}):</strong> {{simulationRuns}} - <strong>Wins:</strong> {{wins}}, <strong>Losses:</strong> {{losses}}</p>
+            <p class="simulation-notes"><strong>Simulations ({{sim.withSwitch ? "Switch Doors" : "Don't Switch Doors"}}):</strong> {{sim.manager.runs}} - <strong>Wins:</strong> {{sim.wins}}, <strong>Losses:</strong> {{sim.losses}}</p>
             <div class="bar-charts">
                 <BarChart style="float:left;" :values="getBarChartValues('doors')" :chartId="'doors'" :labels="getBarChartLabels('doors')" :title="'Car Behind Which Door? (%)'"></BarChart>
                 <BarChart style="float: left; margin-left: 10px;" :values="getBarChartValues('wins')" :chartId="'wins'" :labels="getBarChartLabels('wins')" :title="'Wins vs Losses (%)'"></BarChart>
+                <div style="clear: both">&nbsp;</div>
+                <div class="post-sim-information" v-if="sim.manager.runs > 200">
+                    <p>The car has a 1&frasl;3 chance of being behind any one door.</p>
+                    <p v-if="sim.withSwitch">But did you guess <em>that switching your choice</em> after the host opens an empty one, <em>doubles your chances of winning?</em></p>
+                    <p v-else>But did you guess that <em>keeping your original door</em> after the host opens an empty one, <em>cuts your chances of winning in half</em>?</p>
+                    <p>Click the "Explanation" button up top to find out why.</p>
+                </div>
             </div>
         </div>
         <div style="clear: both"></div>
@@ -29,8 +34,12 @@
 
 <script>
     import ProblemNavigation from './ProblemNavigation.vue';
+    import MontyGame from './MontyGame.vue';
     import BarChart from './BarChart.vue';
     import Instructions from './Instructions.vue';
+
+    import * as f from '../funcs.js';
+    import { SimManager } from '../SimManager.js';
 
     export default {
         name: 'MontyHall',
@@ -39,7 +48,11 @@
         },
         methods: {
             startPlay() {
-                alert('play!');
+                this.stopSim();
+                this.showSimResults = false;
+
+                this.playing = false;
+                setTimeout(() => { this.playing = true; }, 1);
             },
             getBarChartLabels(which) {
                 if (which === 'wins') {
@@ -50,12 +63,12 @@
             },
             getBarChartValues(which) {
                 if (which === 'wins') {
-                    return [this.wins * 100.0 / this.simulationRuns, this.losses * 100.0 / this.simulationRuns];
+                    return [this.sim.wins * 100.0 / this.sim.manager.runs, this.sim.losses * 100.0 / this.sim.manager.runs];
                 } else {
                     let dat = [];
-                    dat.push(this.carBehindDoor[0] * 100.0 / this.simulationRuns);
-                    dat.push(this.carBehindDoor[1] * 100.0 / this.simulationRuns);
-                    dat.push(this.carBehindDoor[2] * 100.0 / this.simulationRuns);
+                    dat.push(this.sim.carBehindDoor[0] * 100.0 / this.sim.manager.runs);
+                    dat.push(this.sim.carBehindDoor[1] * 100.0 / this.sim.manager.runs);
+                    dat.push(this.sim.carBehindDoor[2] * 100.0 / this.sim.manager.runs);
 
                     return dat;
                 }
@@ -63,99 +76,80 @@
             showExplanation() {
 
             },
+            playerWonGame() {
+                this.wonGame = true;
+            },
             simulate(withSwitch) {
-                if (!this.simRunning) {
-                    this.simRunning = true;
+                if (!this.sim.manager.running) {
+                    this.playing = false;
                     this.showSimResults = true;
 
-                    this.wait = 500;
-                    this.simulationRuns = 0;
-                    this.wins = 0;
-                    this.losses = 0;
-                    this.withSwitch = withSwitch;
-                    this.maxRuns = 3000;
+                    this.sim.wins = 0;
+                    this.sim.losses = 0;
+                    this.sim.withSwitch = withSwitch;
+                    this.sim.carBehindDoor = [0, 0, 0];
+
+                    this.sim.manager.startSim();
 
                     this.simulateTick();
-                    this.carBehindDoor = [0, 0, 0];
                 }
             },
             stopSim() {
-                this.simRunning = false;
+                this.sim.manager.stopSim();
             },
             simulateTick() {
-                this.simulationRuns++;
+                const carDoor = f.rand(3);
+                const firstChoice = f.rand(3);
 
-                const carDoor = this.rand(3);
-                const firstChoice = this.rand(3);
-
-                this.carBehindDoor[carDoor - 1]++;
+                this.sim.carBehindDoor[carDoor]++;
 
                 const hostOpens = this.hostOpensDoor(carDoor, firstChoice);
 
-                if (this.withSwitch) {
+                if (this.sim.withSwitch) {
                     // switch door
-                    const finalChoice = [1, 2, 3].find(n => n !== firstChoice && n !== hostOpens);
-                    if (finalChoice === carDoor) {
-                        this.wins++;
-                    }
-                    else {
-                        this.losses++;
-                    }
+                    const finalChoice = [0, 1, 2].find(n => n !== firstChoice && n !== hostOpens);
+                    if (finalChoice === carDoor) this.sim.wins++;
+                    else this.sim.losses++;
                 } else {
-                    if (firstChoice === carDoor) {
-                        this.wins++;
-                    }
-                    else {
-                        this.losses++;
-                    }
+                    if (firstChoice === carDoor) this.sim.wins++;
+                    else this.sim.losses++;
                 }
 
-                if (this.wait > 1) this.wait -= 50;
-                else if (this.wait < 0) this.wait = 0;
-
-                if (this.simRunning && this.maxRuns > 1) {
-                    this.maxRuns--;
-                    setTimeout(this.simulateTick, this.wait);
-                } else if (this.maxRuns <= 1) {
-                    this.stopSim();
-                }
+                this.sim.manager.runNextTick(this.simulateTick);
             },
             hostOpensDoor(carDoor, firstChoice) {
                 let hostOpens = 0;
                 if (carDoor === firstChoice) { // player picked right door
-                    let doorChoice = [1, 2, 3].filter(n => n !== carDoor);
-                    if (carDoor === 1) doorChoice = [2, 3];
-                    else if (carDoor === 2) doorChoice = [1, 3];
-                    else doorChoice = [1, 2];
-
-                    hostOpens = doorChoice[this.rand(2) - 1];
+                    let doorChoice = [0, 1, 2].filter(n => n !== carDoor);
+                    hostOpens = doorChoice[f.rand(2)];
                 } else {
-                    hostOpens = [1, 2, 3].find(n => n !== carDoor && n !== firstChoice);
+                    hostOpens = [0, 1, 2].find(n => n !== carDoor && n !== firstChoice);
                 }
 
                 return hostOpens;
-            },
-            rand(max) {
-                return Math.floor(Math.random() * max) + 1;
             },
         },
         components: {
             ProblemNavigation,
             BarChart,
             Instructions,
+            MontyGame,
+        },
+        mounted() {
+            this.sim.manager = new SimManager();
         },
         data() {
             return {
-                playedGame: true,
-                simulationRuns: 0,
-                wins: 0,
-                losses: 0,
-                simRunning: false,
-                wait: 500,
-                withSwitch: false,
-                maxRuns: 300,
+                playing: false,
+                wonGame: true,
                 showSimResults: false,
-                carBehindDoor: [0,0,0],
+                sim: {
+                    manager: null,
+                    wins: 0,
+                    losses: 0,
+                    withSwitch: false,
+                    carBehindDoor: [0, 0, 0],
+                },
             }
         },
     };
@@ -163,34 +157,5 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-    .door {
-        float: left;
-        width: 100px;
-        height: 100px;
-        text-align: center;
-        box-sizing: border-box;
-        margin-left: 20px;
-        padding-top: 10px;
-        border: solid 4px black;
-    }
-    .blue {
-        background-color: darkblue;
-        color: white;
-    }
-    .red {
-        background-color: darkred;
-        color: white;
-    }
-    .orange {
-        background-color: orangered;
-        color: white;
-    }
-    .green {
-        background-color: green;
-        color: white;
-    }
-    .pink {
-        background-color: deeppink;
-        color: white;
-    }
+
 </style>

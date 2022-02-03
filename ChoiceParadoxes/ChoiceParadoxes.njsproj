@@ -32,6 +32,31 @@
     <Content Include="public\favicon.ico" />
     <Content Include="public\index.html" />
     <Content Include="src\App.vue" />
+    <Content Include="src\assets\bertrands_box\boxes_expl1.jpg" />
+    <Content Include="src\assets\bertrands_box\boxes_expl2.jpg" />
+    <Content Include="src\assets\bertrands_box\boxes_expl3.jpg" />
+    <Content Include="src\assets\bertrands_box\boxes_expl4.jpg" />
+    <Content Include="src\assets\bertrands_box\closed_box1.jpg" />
+    <Content Include="src\assets\bertrands_box\closed_box2.jpg" />
+    <Content Include="src\assets\bertrands_box\closed_box3.jpg" />
+    <Content Include="src\assets\bertrands_box\open_gold.jpg" />
+    <Content Include="src\assets\bertrands_box\open_goldgold.jpg" />
+    <Content Include="src\assets\bertrands_box\open_goldsilver.jpg" />
+    <Content Include="src\assets\bertrands_box\open_silver.jpg" />
+    <Content Include="src\assets\bertrands_box\style.clip" />
+    <Content Include="src\assets\bertrands_box\style_arrows.clip" />
+    <Content Include="src\assets\bertrands_box\style_words.clip" />
+    <Content Include="src\assets\monty_hall\1_closed.jpg" />
+    <Content Include="src\assets\monty_hall\1_closed_selected.jpg" />
+    <Content Include="src\assets\monty_hall\2_closed.jpg" />
+    <Content Include="src\assets\monty_hall\2_closed_selected.jpg" />
+    <Content Include="src\assets\monty_hall\3_closed.jpg" />
+    <Content Include="src\assets\monty_hall\3_closed_selected.jpg" />
+    <Content Include="src\assets\monty_hall\open_car.jpg" />
+    <Content Include="src\assets\monty_hall\open_car_selected.jpg" />
+    <Content Include="src\assets\monty_hall\open_nothing.jpg" />
+    <Content Include="src\assets\monty_hall\open_nothing_selected.jpg" />
+    <Content Include="src\assets\monty_hall\src.clip" />
     <Content Include="src\components\BarChart.vue">
       <SubType>Code</SubType>
     </Content>
@@ -75,6 +100,8 @@
     <Folder Include="public\" />
     <Folder Include="src\" />
     <Folder Include="src\assets\" />
+    <Folder Include="src\assets\bertrands_box\" />
+    <Folder Include="src\assets\monty_hall\" />
     <Folder Include="src\components\" />
   </ItemGroup>
   <ItemGroup>

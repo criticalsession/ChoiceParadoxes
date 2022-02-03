@@ -98,7 +98,7 @@
                     }
                 } else if (this.game.step === 3) {
                     message = '<strong>You win!</strong> You predicted the second coin would be a <strong>' + (this.game.prediction === 1 ? 'SILVER' : 'GOLD') + ' coin</strong> and it was.<br /><br />';
-                    message += 'Now you can either click the "Play!" to try your luck again, or click "Simulate" to run thousands of games automatically.<br /><br />The results might surprise you!';
+                    message += 'Now you can either click the "Play!" to try your luck again, or click "Simulate" to run games automatically.<br /><br />The results might surprise you!';
                 } else if (this.game.step === 4) {
                     message = '<strong>You lost!</strong> You predicted the second coin would be a <strong>' + (this.game.prediction === 1 ? 'SILVER' : 'GOLD') + ' coin</strong> but, unfortunately, it wasn\'t.<br /><br />'
                     message += 'But don\'t worry, just click the <strong>"Play!"</strong> button to reshuffle the boxes and try again.';

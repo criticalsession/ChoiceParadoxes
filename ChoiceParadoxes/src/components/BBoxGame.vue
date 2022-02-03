@@ -39,9 +39,6 @@
             startPlay() {
                 this.resetGame();
 
-                this.simRunning = false;
-                this.ranSimOnce = false;
-
                 this.game.boxes = this.funcFillBoxes();
                 this.game.step = 1;
             },

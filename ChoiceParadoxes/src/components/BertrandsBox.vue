@@ -1,12 +1,12 @@
 <template>
     <div class="home">
         <h1>Bertrand's Box Paradox</h1>
-        <problem-navigation v-on:show-explanation="displayExplanation" wikiLink="https://en.wikipedia.org/wiki/Bertrand's_box_paradox" :showingExplanation="showExplanation" />
+        <problem-navigation v-on:show-explanation="toggleExplanation" wikiLink="https://en.wikipedia.org/wiki/Bertrand's_box_paradox" :showingExplanation="showExplanation" />
         <div v-if="!showExplanation">
-            <Instructions>
+            <Introduction>
                 <p>There are three boxes. One box contains 2 gold coins, one contains 2 silver coins, and one contains 1 silver and 1 gold coin. You pick a box and one coin from the box. If it's gold...</p>
                 <p><strong>...what are the odds that the second coin is also gold?</strong></p>
-            </Instructions>
+            </Introduction>
             <p class="buttons">
                 <button v-on:click="startPlay" :disabled="sim.running" type="button" :class="{ 'active' : !sim.running}">Play!</button>
                 <button :disabled="sim.running" :class="{ 'active' : !sim.running, 'this-sim-running' : sim.running } " v-if="wonGame" v-on:click="simulate()" type="button">Simulate</button>
@@ -20,7 +20,7 @@
                     <BarChart style="float:left; margin-left: 10px;" :values="getBarChartValues('twogold')" :chartId="'twogold'" :labels="getBarChartLabels('twogold')" :title="'Second Coin After First Gold (%)'"></BarChart>
                     <div style="clear: both">&nbsp;</div>
                     <div class="post-sim-information" v-if="sim.manager.runs > 200">
-                        <p>Finding that first GOLD coin is obviously a 50/50 chance.</p>
+                        <p>Finding that first GOLD coin is a 50/50 chance.</p>
                         <p>But did you guess that a second GOLD coin is twice as likely as a SILVER one?<br />Or did you think it's also 50/50?</p>
                         <p>Click the "Explanation" button up top to find out why.</p>
                     </div>
@@ -46,7 +46,7 @@
 <script>
     import ProblemNavigation from './ProblemNavigation.vue';
     import BarChart from './BarChart.vue';
-    import Instructions from './Instructions.vue';
+    import Introduction from './Introduction.vue';
     import BBoxGame from './BBoxGame.vue';
 
     import * as f from '../funcs.js';
@@ -57,11 +57,11 @@
         components: {
             ProblemNavigation,
             BarChart,
-            Instructions,
+            Introduction,
             BBoxGame,
         },
         methods: {
-            displayExplanation() {
+            toggleExplanation() {
                 this.showExplanation = !this.showExplanation;
             },
             startPlay() {
@@ -150,7 +150,7 @@
                 this.wonGame = true;
             },
         },
-        mounted() {
+        beforeMount() {
             this.sim.manager = new SimManager();
         },
         data() {

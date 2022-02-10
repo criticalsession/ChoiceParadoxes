@@ -28,16 +28,16 @@
             </div>
         </div>
         <div v-else>
-            <p><strong>How it Works</strong></p>
-            <p>In the Bertrand's Box game you are given three boxes. Each of these boxes contains a combination of two coins: one contains 2 gold coins, one contains 2 silver coins and one contains 1 gold coin and 1 silver coin. The first step is to pick one of the boxes and then uncover (or take) one of the coins.</p>
+            <h2>How it Works</h2>
+            <p>In the Bertrand's Box game you are given three boxes. Each of these boxes contains a combination of two coins: <strong>one contains 2 gold coins, one contains 2 silver coins and one contains 1 gold coin and 1 silver coin</strong>. The first step is to pick one of the boxes and then uncover (or take) one of the coins.</p>
             <img class="expl-image" src="~@/assets/bertrands_box/boxes_expl1.jpg" />
-            <p>The odds of finding a gold coin at this point are 1&frasl;2. You can work it out as if all coins are <i>not</i> separated in different boxes: there are 3 gold coins and 3 silver coins which gives you equal odds to pick one or the other.</p>
+            <p><strong>The odds of finding a gold coin at this point are 1&frasl;2</strong>. You can work it out as if all coins are <i>not</i> separated in different boxes: there are 3 gold coins and 3 silver coins which gives you equal odds to pick one or the other.</p>
             <img class="expl-image" src="~@/assets/bertrands_box/boxes_expl2.jpg" />
             <p>The tricky part comes when it's time to calculate the odds that the second coin is also gold. Most people guess that it's also 1&frasl;2 &mdash; after all, if you found a gold coin then there are only two options: either you picked the box with 2 gold coins or you picked the box with 1 gold and 1 silver so you're left with either 1 remaining gold coin or 1 remaining silver coin.</p>
             <img class="expl-image" src="~@/assets/bertrands_box/boxes_expl3.jpg" />
-            <p>The problem with that line of thinking (perhaps already becoming apparent by the above drawing) is that players miss the fact that one of the boxes has 2 gold coins and they could have picked either one! Writing out all the possible scenarios where a player picks a gold coin first makes this much clearer... drawing them is better!</p>
+            <p>The problem with that line of thinking (perhaps already becoming apparent by the above drawing) is that <strong>players miss the fact that one of the boxes has 2 gold coins and they could have picked either one!</strong> Writing out all the possible scenarios where a player picks a gold coin first makes this much clearer... drawing them is better!</p>
             <img class="expl-image" src="~@/assets/bertrands_box/boxes_expl4.jpg" />
-            <p>The obvious conclusion then is that the odds of finding another gold coin are twice as high as finding a silver coin, which can be easily verified by running the simulation on this page. <strong>So go ahead and click "Hide Explanation" up at the top of the page to Play the game yourself or simulate {{ sim.manager.maxRuns }} runs!</strong> <i>(You'll need to win the game at least once to run the simulations.)</i></p>
+            <p>The obvious conclusion then is that <strong>the odds of finding another gold coin are double that of finding a silver coin</strong>, which can be easily verified by running the simulation on this page. <strong>So go ahead and click "Hide Explanation" up at the top of the page to Play the game yourself or simulate {{ sim.manager.maxRuns }} runs!</strong> <i>(You'll need to win the game at least once to run the simulations, but you now have the knowledge to do that easily.)</i></p>
         </div>
         <div style="clear: both"></div>
     </div>
@@ -172,8 +172,4 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-    .expl-image {
-        margin: 0 auto;
-        display: block;
-    }
 </style>

@@ -31,7 +31,18 @@
             <div style="clear: both"></div>
         </div>
         <div v-else>
-            Explanation
+            <h2>How it Works</h2>
+            <p>In the <strong>Monty Hall game</strong> - loosely based on the game show "Let's Make a Deal", there are three doors in front of you. Behind one of the doors there's a car, and behind the other two there's nothing (or, in the original format, goats). The problem reaches its crux when, after choosing one of the doors, the host opens one of the remaining doors. The odds for <strong>switching vs keeping your original door</strong> are quite surprising, so let's break them down.</p>
+            <p>When choosing the first door, <strong>each door has a 1&frasl;3 chance of containing the car</strong>. Picking either one of the doors gives you an equal chance of winning or losing.</p>
+            <img class="expl-image" src="~@/assets/monty_hall/doors_expl1.jpg" />
+            <p>Once you've picked a door, the host opens one of the remaining doors. Obviously, he would never open the one with the car behind it so <strong>he opens an empty door</strong> instead. If you already have the car, then he'll open a door randomly. At this point, since there are only two doors remaining, the odds have changed. Most people assume that the odds are now 50/50 (or 1&frasl;2) that the car is behind either your door or the remaining door.</p>
+            <img class="expl-image" src="~@/assets/monty_hall/doors_expl2.jpg" />
+            <p>But is that correct? The actual odds can be calculated using <a href="https://en.wikipedia.org/wiki/Monty_Hall_problem#Bayes'_theorem" target="_blank">Bayes' Theoren</a> or &mdash; way easier, if you ask me &mdash; shown very clearly using a simple table!</p>
+            <img class="expl-image" src="~@/assets/monty_hall/doors_expl3.jpg" />
+            <p style="text-align: center;"><em>Keep in mind that the host removes one of the empty doors!</em></p>
+            <p>It's clear from the above table that <strong>switching the selected door to the remaining door <i>doubles</i> your chances of winning</strong> so you should always switch doors! Sure, sometimes you'll have chosen the correct door, but <em>statistically</em> that only happens once every three games! If wrapping your head around the paradox is hard, you can think about it like this: <strong>Your original door only contains a car 1 in 3 times, but the remaining door contains a car 2 out of 3 times</strong> (only not containing a car when you chose the car with your first choice.)</p>
+            <img class="expl-image" src="~@/assets/monty_hall/doors_expl4.jpg" />
+            <p><strong>So go ahead and click "Hide Explanation" up at the top of the page to Play the game yourself or simulate {{ sim.manager.maxRuns }} runs!</strong> <i>(You'll need to win the game at least once to run the simulations, but you now have the knowledge to do that easily.)</i></p>
         </div>
     </div>
 </template>

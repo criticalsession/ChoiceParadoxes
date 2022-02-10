@@ -86,3 +86,8 @@ button.this-sim-running {
     text-align: center;
     margin-top: 10px;
 }
+
+.expl-image {
+    margin: 0 auto;
+    display: block;
+}
